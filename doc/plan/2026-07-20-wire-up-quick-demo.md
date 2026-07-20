@@ -4,22 +4,20 @@ A good first milestone is deliberately modest:
 
 Keep the quaternion mathematics, cube geometry, rendering, and DragonRuby application loop separate. That will make the code easier to explain during the talk.
 
-DragonRuby loads `mygame/app/main.rb` as the entry point. Additional project files can be loaded with paths such as `require "app/quaternion.rb"`. The application receives persistent state through `args.state`, keyboard input through `args.inputs`, and rendering collections through `args.outputs`. ([docs.dragonruby.org][1])
+DragonRuby loads `app/main.rb` as the entry point. This checkout's starter exposes `tick` inside `module Main`. Additional project files can be loaded with paths such as `require "app/quaternion.rb"`. The application receives persistent state through `args.state`, keyboard input through `args.inputs`, and rendering collections through `args.outputs`. ([docs.dragonruby.org][1])
 
 ## Target structure
 
-Inside your Git repository, create this structure:
+From the repository root, create this structure:
 
 ```text
-mygame/
-├── app/
-│   ├── main.rb
-│   ├── quaternion.rb
-│   ├── cube.rb
-│   └── cube_demo.rb
-├── metadata/
-├── sprites/
-└── README.md
+app/
+├── main.rb
+├── quaternion.rb
+├── cube.rb
+└── cube_demo.rb
+metadata/
+sprites/
 ```
 
 The responsibilities will be:
@@ -37,35 +35,35 @@ You can implement this in four small stages.
 
 # Stage 1: Replace the original demo
 
-First, preserve the pristine version:
+The pristine starter is already preserved by the existing `Prepare the stage`
+commit. Confirm that the working tree is clean before replacing it:
 
 ```bash
-cd /path/to/dragonruby/mygame
-
-git add .
-git commit -m "Preserve pristine DragonRuby project"
+git status --short
 ```
 
 Replace `app/main.rb` with:
 
 ```ruby
-def tick(args)
-  args.outputs.background_color = [20, 24, 35]
+module Main
+  def tick(args)
+    args.outputs.background_color = [20, 24, 35]
 
-  args.outputs.labels << {
-    x: 640,
-    y: 380,
-    text: "Quaternion Cube",
-    alignment_enum: 1,
-    size_enum: 8
-  }
+    args.outputs.labels << {
+      x: 640,
+      y: 380,
+      text: "Quaternion Cube",
+      alignment_enum: 1,
+      size_enum: 8
+    }
 
-  args.outputs.labels << {
-    x: 640,
-    y: 330,
-    text: "DragonRuby is ready",
-    alignment_enum: 1
-  }
+    args.outputs.labels << {
+      x: 640,
+      y: 330,
+      text: "DragonRuby is ready",
+      alignment_enum: 1
+    }
+  end
 end
 ```
 
@@ -87,7 +85,7 @@ git commit -m "Replace starter demo with quaternion demo shell"
 Create:
 
 ```text
-mygame/app/quaternion.rb
+app/quaternion.rb
 ```
 
 Add:
@@ -195,9 +193,9 @@ end
 
 Conceptually, this implements:
 
-[
+$$
 p' = qpq^{-1}.
-]
+$$
 
 Because the orientation is kept normalised, its conjugate is also its inverse.
 
@@ -215,7 +213,7 @@ git commit -m "Add quaternion rotation implementation"
 Create:
 
 ```text
-mygame/app/cube.rb
+app/cube.rb
 ```
 
 Add:
@@ -301,7 +299,7 @@ git commit -m "Add cube geometry and perspective projection"
 Create:
 
 ```text
-mygame/app/cube_demo.rb
+app/cube_demo.rb
 ```
 
 Add:
@@ -439,9 +437,11 @@ require "app/quaternion.rb"
 require "app/cube.rb"
 require "app/cube_demo.rb"
 
-def tick(args)
-  args.state.demo ||= CubeDemo.new
-  args.state.demo.tick(args)
+module Main
+  def tick(args)
+    args.state.demo ||= CubeDemo.new
+    args.state.demo.tick(args)
+  end
 end
 ```
 
@@ -490,10 +490,10 @@ q = 0.991 +0.131i +0.000j +0.000k
 
 The angle is 15°, but the quaternion contains the half-angle:
 
-[
+$$
 \cos 7.5^\circ \approx 0.991,\qquad
 \sin 7.5^\circ \approx 0.131.
-]
+$$
 
 That gives you a useful observation for the presentation.
 
@@ -523,13 +523,13 @@ X
 
 The final orientation should differ.
 
-You can also watch the displayed quaternion values. They will not be the same, apart from the special equivalence between (q) and (-q).
+You can also watch the displayed quaternion values. They will not be the same, apart from the special equivalence between $q$ and $-q$.
 
 This demonstrates:
 
-[
+$$
 q_yq_x \ne q_xq_y.
-]
+$$
 
 In the code, new rotations are applied using:
 
@@ -582,11 +582,11 @@ require "app/cube_demo.rb"
 
 Persistent objects inside `args.state` can survive code reloads. Press `R` first.
 
-For structural changes to classes or state, restart DragonRuby:
+For structural changes to classes or state, restart DragonRuby from the
+repository root:
 
 ```bash
-Ctrl+C
-./dragonruby
+../dragonruby
 ```
 
 ## The cube becomes distorted or disappears
@@ -625,7 +625,7 @@ Once this checkpoint is stable, evolve it in this order:
 
 1. Draw coloured local (x), (y), and (z) axes.
 2. Add a toggle between world-axis and local-axis multiplication.
-3. Add an arbitrary diagonal axis such as ([1,1,1]).
+3. Add an arbitrary diagonal axis such as `[1, 1, 1]`.
 4. Add continuous rotation while a key is held.
 5. Add target orientations and SLERP.
 6. Replace the cube with a ruby gemstone or construction crane.
