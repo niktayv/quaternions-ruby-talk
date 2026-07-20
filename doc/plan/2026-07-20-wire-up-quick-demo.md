@@ -1,14 +1,19 @@
-A good first milestone is deliberately modest:
+# Wire up a quick demo
+
+Our first milestone is deliberately modest:
 
 > Display a perspective wireframe cube and rotate it in 15-degree steps using the keyboard.
 
-Keep the quaternion mathematics, cube geometry, rendering, and DragonRuby application loop separate. That will make the code easier to explain during the talk.
+We will keep the quaternion mathematics, cube geometry, rendering, and DragonRuby application loop separate.
+That will make the code easier to explain during the talk.
 
-DragonRuby loads `app/main.rb` as the entry point. This checkout's starter exposes `tick` inside `module Main`. Additional project files can be loaded with paths such as `require "app/quaternion.rb"`. The application receives persistent state through `args.state`, keyboard input through `args.inputs`, and rendering collections through `args.outputs`. ([docs.dragonruby.org][1])
+DragonRuby loads `app/main.rb` as the entry point. This checkout's starter exposes `tick` inside `module Main`.
+Additional project files can be loaded with paths such as `require "app/quaternion.rb"`.
+The application receives persistent state through `args.state`, keyboard input through `args.inputs`, and rendering collections through `args.outputs`. ([docs.dragonruby.org][1])
 
 ## Target structure
 
-From the repository root, create this structure:
+From the repository root, we will create this structure:
 
 ```text
 app/
@@ -29,17 +34,35 @@ cube_demo.rb    Input, state updates and rendering
 main.rb         DragonRuby entry point
 ```
 
-You can implement this in four small stages.
+We will implement this in four small stages.
+Each stage will land into a separate branch.
 
----
+## Stage 0: Starting point
 
-# Stage 1: Replace the original demo
+The pristine starter is already preserved by the existing `Prepare the stage` commit.
 
-The pristine starter is already preserved by the existing `Prepare the stage`
-commit. Confirm that the working tree is clean before replacing it:
+We have added some plans into the `doc/plan/` folder and a draft slides into the `slides/` folder.
+
+After committing the plans into the `main` branch, with app/ still pristine:
+
+```
+git switch -c stage-0-starting-point
+```
+
+The branch `stage-0-starting-point` will contain unmodified code in the `app/` folder.
+
+## Stage 1: Make changes
+
+Confirm that the working tree is clean before replacing it:
 
 ```bash
 git status --short
+```
+
+Switch to a new branch:
+
+```bash
+git switch -c stage-1-we-can-make-changes
 ```
 
 Replace `app/main.rb` with:
@@ -54,14 +77,20 @@ module Main
       y: 380,
       text: "Quaternion Cube",
       alignment_enum: 1,
-      size_enum: 8
+      size_enum: 8,
+      r: 255,
+      g: 255,
+      b: 255
     }
 
     args.outputs.labels << {
       x: 640,
       y: 330,
       text: "DragonRuby is ready",
-      alignment_enum: 1
+      alignment_enum: 1,
+      r: 200,
+      g: 210,
+      b: 225
     }
   end
 end
@@ -69,18 +98,28 @@ end
 
 Save the file while DragonRuby is running.
 
-You should see a dark canvas with two centred labels.
+You should see a dark canvas with two centred white labels.
 
-Commit this checkpoint:
+Commit this checkpoint to branch `stage-1-we-can-make-changes`:
 
 ```bash
 git add app/main.rb
-git commit -m "Replace starter demo with quaternion demo shell"
+git commit -m "Show that we can make changes"
 ```
 
----
+## Stage 2: Add the quaternion implementation
 
-# Stage 2: Add the quaternion implementation
+Confirm that the working tree is clean before replacing it:
+
+```bash
+git status --short
+```
+
+Switch to a new branch:
+
+```bash
+git switch -c stage-2-quaternion-algebra
+```
 
 Create:
 
@@ -199,16 +238,26 @@ $$
 
 Because the orientation is kept normalised, its conjugate is also its inverse.
 
-Do not load the file yet. First commit it independently:
+Commit this checkpoint to the branch `stage-2-quaternion-algebra`:
 
 ```bash
 git add app/quaternion.rb
-git commit -m "Add quaternion rotation implementation"
+git commit -m "Implement quaternion algebra"
 ```
 
----
+## Stage 3: Define and project the cube
 
-# Stage 3: Define and project the cube
+Confirm that the working tree is clean before replacing it:
+
+```bash
+git status --short
+```
+
+Switch to a new branch:
+
+```bash
+git switch -c stage-3-cube-projection
+```
 
 Create:
 
@@ -285,16 +334,26 @@ perspective = camera_distance / (camera_distance - z)
 
 A point closer to the virtual camera receives a larger scale, while a point farther away receives a smaller one.
 
-Commit it:
+Commit this checkpoint to the branch `stage-3-cube-projection`:
 
 ```bash
 git add app/cube.rb
 git commit -m "Add cube geometry and perspective projection"
 ```
 
----
+## Stage 4: Use Quaternions to rotate the cube
 
-# Stage 4: Add the DragonRuby application
+Confirm that the working tree is clean before replacing it:
+
+```bash
+git status --short
+```
+
+Switch to a new branch:
+
+```bash
+git switch -c stage-4-keyboard-controls
+```
 
 Create:
 
@@ -451,16 +510,14 @@ Save all four files.
 
 DragonRuby should reload the application and show the cube.
 
-Commit the completed milestone:
+Commit the completed milestone to the branch `stage-4-keyboard-controls`:
 
 ```bash
 git add app
 git commit -m "Add keyboard-controlled quaternion cube"
 ```
 
----
-
-# Controls
+## Controls
 
 The initial controls are:
 
@@ -497,9 +554,7 @@ $$
 
 That gives you a useful observation for the presentation.
 
----
-
-# Verify non-commutativity
+## Verify non-commutativity
 
 Once the cube works, perform this test.
 
@@ -547,11 +602,9 @@ args.state.orientation * rotation
 
 will apply the command in the cube’s **local coordinate system**. This distinction is valuable, but I would leave it for the second implementation milestone.
 
----
+## Troubleshooting
 
-# Troubleshooting
-
-## Blank screen after adding `require`
+### Blank screen after adding `require`
 
 Look at the terminal where DragonRuby is running. A syntax error or missing file will be reported there.
 
@@ -566,7 +619,7 @@ app/main.rb
 
 Linux paths are case-sensitive.
 
-## `uninitialized constant Quaternion`
+### `uninitialized constant Quaternion`
 
 Check that `main.rb` loads files in this order:
 
@@ -578,7 +631,7 @@ require "app/cube_demo.rb"
 
 `cube.rb` uses `Quaternion`, and `cube_demo.rb` uses both classes.
 
-## Changes appear not to take effect
+### Changes appear not to take effect
 
 Persistent objects inside `args.state` can survive code reloads. Press `R` first.
 
@@ -589,7 +642,7 @@ repository root:
 ../dragonruby
 ```
 
-## The cube becomes distorted or disappears
+### The cube becomes distorted or disappears
 
 Check that the cube vertices remain around (-1) to (1), and that:
 
@@ -599,7 +652,7 @@ camera_distance: 5
 
 has not been reduced below the cube’s effective depth.
 
-## A key rotates repeatedly
+### A key rotates repeatedly
 
 Use:
 
@@ -617,9 +670,17 @@ keyboard.x
 
 at this stage, because that represents a held key and would rotate the cube on every frame.
 
----
+## The presentation flow
 
-# Recommended next implementation sequence
+```bash
+git switch stage-0-starting-point
+git switch stage-1-our-changes
+git switch stage-2-quaternion-algebra
+git switch stage-3-cube-projection
+git switch stage-4-keyboard-controls
+```
+
+## Recommended next implementation sequence
 
 Once this checkpoint is stable, evolve it in this order:
 
