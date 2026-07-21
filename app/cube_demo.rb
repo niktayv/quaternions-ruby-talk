@@ -1,5 +1,10 @@
 class CubeDemo
   ROTATION_STEP = Math::PI / 12.0
+  LOCAL_AXES = [
+    { label: "(x)", vector: [1.35, 0, 0], colour: [255, 134, 134] },
+    { label: "(y)", vector: [0, 1.35, 0], colour: [125, 220, 153] },
+    { label: "(z)", vector: [0, 0, 1.35], colour: [130, 177, 255] }
+  ].freeze
 
   def tick(args)
     initialise_state(args)
@@ -44,6 +49,7 @@ class CubeDemo
 
     draw_title(args)
     draw_cube(args)
+    draw_local_axes(args)
     draw_instructions(args)
     draw_quaternion(args)
   end
@@ -96,6 +102,22 @@ class CubeDemo
         r: 255,
         g: 235,
         b: 130
+      }
+    end
+  end
+
+  def draw_local_axes(args)
+    cube = args.state.cube
+    orientation = args.state.orientation
+    origin = cube.projected_point([0, 0, 0], orientation, centre_x: 640, centre_y: 380)
+
+    LOCAL_AXES.each do |axis|
+      x, y = cube.projected_point(axis[:vector], orientation, centre_x: 640, centre_y: 380)
+      r, g, b = axis[:colour]
+
+      args.outputs.lines << { x: origin[0], y: origin[1], x2: x, y2: y, r: r, g: g, b: b }
+      args.outputs.labels << {
+        x: x + 8, y: y + 8, text: axis[:label], size_enum: 2, r: r, g: g, b: b
       }
     end
   end

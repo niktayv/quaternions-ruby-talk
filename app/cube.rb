@@ -31,14 +31,12 @@ class Cube
 
   def projected_vertices(orientation, centre_x:, centre_y:)
     VERTICES.map do |vertex|
-      rotated = orientation.rotate(vertex)
-
-      project(
-        rotated,
-        centre_x: centre_x,
-        centre_y: centre_y
-      )
+      projected_point(vertex, orientation, centre_x: centre_x, centre_y: centre_y)
     end
+  end
+
+  def projected_point(point, orientation, centre_x:, centre_y:)
+    project(orientation.rotate(point), centre_x: centre_x, centre_y: centre_y)
   end
 
   private
