@@ -70,18 +70,19 @@ class CubeDemo
       centre_y: 380
     )
 
-    Cube::EDGES.each do |from_index, to_index|
+    Cube::EDGES.each_with_index do |(from_index, to_index), index|
       x1, y1 = points[from_index]
       x2, y2 = points[to_index]
+      r, g, b = Cube::EDGE_COLOURS[index]
 
       args.outputs.lines << {
         x: x1,
         y: y1,
         x2: x2,
         y2: y2,
-        r: 130,
-        g: 210,
-        b: 255,
+        r: r,
+        g: g,
+        b: b,
         a: 255
       }
     end
