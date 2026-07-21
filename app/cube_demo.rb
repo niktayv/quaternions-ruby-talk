@@ -88,22 +88,15 @@ class CubeDemo
       centre_x: 640,
       centre_y: 380
     )
+    depths = cube.vertex_depths(args.state.orientation)
 
     Cube::EDGES.each_with_index do |(from_index, to_index), index|
       x1, y1 = points[from_index]
       x2, y2 = points[to_index]
       r, g, b = Cube::EDGE_COLOURS[index]
+      thickness = edge_thickness(depths[from_index], depths[to_index])
 
-      args.outputs.lines << {
-        x: x1,
-        y: y1,
-        x2: x2,
-        y2: y2,
-        r: r,
-        g: g,
-        b: b,
-        a: 255
-      }
+      draw_cube_edge(args, x1, y1, x2, y2, [r, g, b], thickness)
     end
 
     points.each_with_index do |(x, y), index|
@@ -115,6 +108,35 @@ class CubeDemo
         r: 255,
         g: 235,
         b: 130
+      }
+    end
+  end
+
+  def edge_thickness(from_depth, to_depth)
+    average_depth = (from_depth + to_depth) / 2.0
+    [[((average_depth + 1.75) * 1.45).round, 2].max, 5].min
+  end
+
+  def draw_cube_edge(args, x1, y1, x2, y2, colour, thickness)
+    length = Math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+    return if length.zero?
+
+    offset_x = -(y2 - y1) / length
+    offset_y = (x2 - x1) / length
+    r, g, b = colour
+
+    thickness.times do |index|
+      offset = index - (thickness - 1) / 2.0
+
+      args.outputs.lines << {
+        x: x1 + offset_x * offset,
+        y: y1 + offset_y * offset,
+        x2: x2 + offset_x * offset,
+        y2: y2 + offset_y * offset,
+        r: r,
+        g: g,
+        b: b,
+        a: 255
       }
     end
   end

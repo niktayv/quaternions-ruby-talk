@@ -39,6 +39,10 @@ class Cube
     project(orientation.rotate(point), centre_x: centre_x, centre_y: centre_y)
   end
 
+  def vertex_depths(orientation)
+    VERTICES.map { |vertex| orientation.rotate(vertex)[2] }
+  end
+
   private
 
   def project(point, centre_x:, centre_y:)
