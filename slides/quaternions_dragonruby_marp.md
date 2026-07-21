@@ -2,6 +2,7 @@
 marp: true
 theme: default
 paginate: true
+math: mathjax
 backgroundColor: #111827
 color: #f9fafb
 style: |
@@ -74,17 +75,17 @@ Mathematics often grows like this:
 
 We start with:
 
-\[
+$$
 1, 2, 3, 4, \ldots
-\]
+$$
 
 They are excellent for counting.
 
 But the equation
 
-\[
+$$
 x + 2 = 1
-\]
+$$
 
 has no solution in natural numbers.
 
@@ -94,15 +95,15 @@ has no solution in natural numbers.
 
 Add zero and negatives:
 
-\[
+$$
 \ldots, -2, -1, 0, 1, 2, \ldots
-\]
+$$
 
 Now equations like
 
-\[
+$$
 x + a = b
-\]
+$$
 
 always have an integer solution.
 
@@ -114,17 +115,17 @@ We paid a small conceptual price: numbers can now be “less than nothing”.
 
 But multiplication creates another problem:
 
-\[
+$$
 3x = 2
-\]
+$$
 
 No integer solution.
 
 So we add fractions:
 
-\[
+$$
 \frac{2}{3}, \frac{5}{7}, -\frac{11}{4}
-\]
+$$
 
 Now division by non-zero numbers works.
 
@@ -136,9 +137,9 @@ The rationals still have gaps.
 
 The diagonal of a unit square has length:
 
-\[
+$$
 \sqrt{2}
-\]
+$$
 
 It is not rational.
 
@@ -150,21 +151,21 @@ So we complete the number line and obtain the **real numbers**.
 
 The real numbers still cannot solve:
 
-\[
+$$
 x^2 = -1
-\]
+$$
 
 So we add a new number:
 
-\[
+$$
 i^2 = -1
-\]
+$$
 
 and obtain:
 
-\[
+$$
 a + bi
-\]
+$$
 
 ---
 
@@ -188,9 +189,9 @@ Complex numbers live on a plane.
 
 And complex numbers of length one rotate that plane:
 
-\[
+$$
 e^{i\theta} = \cos\theta + i\sin\theta
-\]
+$$
 
 Multiplication becomes rotation.
 
@@ -204,9 +205,9 @@ Can we build something similar for **3D space**?
 
 Maybe a number like:
 
-\[
+$$
 a + bi + cj
-\]
+$$
 
 Hamilton tried.
 
@@ -220,15 +221,15 @@ The breakthrough was not three components.
 
 It was four:
 
-\[
+$$
 q = w + xi + yj + zk
-\]
+$$
 
 with
 
-\[
+$$
 i^2 = j^2 = k^2 = ijk = -1
-\]
+$$
 
 These are the **quaternions**.
 
@@ -240,15 +241,15 @@ Quaternions preserve many familiar rules.
 
 But multiplication is no longer commutative:
 
-\[
+$$
 ij = k
-\]
+$$
 
 while
 
-\[
+$$
 ji = -k
-\]
+$$
 
 The order matters.
 
@@ -275,15 +276,15 @@ The algebra is telling the truth.
 
 A quaternion has a scalar part and a vector part:
 
-\[
+$$
 q = (w, \mathbf v)
-\]
+$$
 
 or
 
-\[
+$$
 q = w + xi + yj + zk
-\]
+$$
 
 For rotations, we mostly care about **unit quaternions**.
 
@@ -293,15 +294,15 @@ For rotations, we mostly care about **unit quaternions**.
 
 A 3D rotation is naturally described by:
 
-- an axis \(\mathbf u\)
-- an angle \(\theta\)
+- an axis $\mathbf u$
+- an angle $\theta$
 
 The corresponding unit quaternion is:
 
-\[
+$$
 q = \cos\frac{\theta}{2}
 + \mathbf u\sin\frac{\theta}{2}
-\]
+$$
 
 That half-angle is important.
 
@@ -311,15 +312,15 @@ That half-angle is important.
 
 Treat a 3D point as a “pure” quaternion:
 
-\[
+$$
 p = 0 + xi + yj + zk
-\]
+$$
 
 Then rotate it by:
 
-\[
+$$
 p' = qpq^{-1}
-\]
+$$
 
 This is the whole trick.
 
@@ -332,12 +333,15 @@ class Quaternion
   attr_reader :w, :x, :y, :z
 
   def initialize(w, x, y, z)
-    @w, @x, @y, @z = w, x, y, z
+    @w = w.to_f
+    @x = x.to_f
+    @y = y.to_f
+    @z = z.to_f
   end
 end
 ```
 
-A quaternion is just four numbers.
+A quaternion is just four floating-point numbers.
 
 The magic is in multiplication.
 
@@ -346,12 +350,12 @@ The magic is in multiplication.
 # Quaternion multiplication
 
 ```ruby
-def *(o)
+def *(other)
   Quaternion.new(
-    w*o.w - x*o.x - y*o.y - z*o.z,
-    w*o.x + x*o.w + y*o.z - z*o.y,
-    w*o.y - x*o.z + y*o.w + z*o.x,
-    w*o.z + x*o.y - y*o.x + z*o.w
+    w*other.w - x*other.x - y*other.y - z*other.z,
+    w*other.x + x*other.w + y*other.z - z*other.y,
+    w*other.y - x*other.z + y*other.w + z*other.x,
+    w*other.z + x*other.y - y*other.x + z*other.w
   )
 end
 ```
@@ -364,12 +368,13 @@ Notice: the order of multiplication matters.
 
 ```ruby
 def self.from_axis_angle(axis, angle)
-  ax, ay, az = normalize(axis)
-  half = angle / 2.0
-  s = Math.sin(half)
+  ax, ay, az = normalize_vector(axis)
+  half_angle = angle / 2.0
+  scale = Math.sin(half_angle)
 
-  Quaternion.new(
-    Math.cos(half), ax*s, ay*s, az*s
+  new(
+    Math.cos(half_angle),
+    ax * scale, ay * scale, az * scale
   )
 end
 ```
@@ -381,11 +386,11 @@ One axis. One angle. One object.
 # Rotating a vector
 
 ```ruby
-def rotate(v)
-  p = Quaternion.new(0, v.x, v.y, v.z)
-  r = self * p * conjugate
+def rotate(vector)
+  point = Quaternion.new(0, *vector)
+  result = self * point * conjugate
 
-  Vector3.new(r.x, r.y, r.z)
+  [result.x, result.y, result.z]
 end
 ```
 
@@ -398,9 +403,11 @@ This is where algebra touches the screen.
 DragonRuby gives us a tiny Ruby game loop:
 
 ```ruby
-def tick(args)
-  # update state
-  # draw frame
+module Main
+  def tick(args)
+    # update state
+    # draw frame
+  end
 end
 ```
 
@@ -441,8 +448,8 @@ def project(x, y, z)
   scale = camera / (camera - z)
 
   [
-    640 + x * 160 * scale,
-    360 + y * 160 * scale
+    640 + x * 130 * scale,
+    380 + y * 130 * scale
   ]
 end
 ```
@@ -454,13 +461,19 @@ Fake 3D can be very convincing.
 # Drawing the cube
 
 ```ruby
-points = VERTICES.map do |v|
-  rotated = args.state.orientation.rotate(v)
-  project(*rotated)
-end
+points = args.state.cube.projected_vertices(
+  args.state.orientation,
+  centre_x: 640,
+  centre_y: 380
+)
 
-EDGES.each do |a, b|
-  args.outputs.lines << line(points[a], points[b])
+Cube::EDGES.each do |from_index, to_index|
+  x1, y1 = points[from_index]
+  x2, y2 = points[to_index]
+
+  args.outputs.lines << {
+    x: x1, y: y1, x2: x2, y2: y2
+  }
 end
 ```
 
@@ -470,7 +483,7 @@ The quaternion supplies the orientation.
 
 ---
 
-# Demo 1: arbitrary axis rotation
+# One rotation, any axis
 
 ```ruby
 axis = [1, 1, 1]
@@ -480,33 +493,40 @@ args.state.orientation =
   Quaternion.from_axis_angle(axis, angle)
 ```
 
-The cube rotates around a diagonal axis.
+This is the **next implementation milestone**.
 
-Not x, then y, then z.
+One quaternion can rotate around a diagonal axis.
 
-One spatial rotation.
+Not x, then y, then z—one spatial rotation.
 
 ---
 
-# Demo 2: order matters
+# Live demo controls
+
+- **X / Y / Z** — rotate +15° around world axes
+- **J / K / L** — rotate −15° around world axes
+- **R** — reset to identity
+- Compare **R, X×6, Y×6** with **R, Y×6, X×6**
+
+---
+
+# Live demo: order matters
 
 ```ruby
-if args.inputs.keyboard.key_down.x
-  q = Quaternion.from_axis_angle([1,0,0], Math::PI / 2)
-  args.state.orientation = q * args.state.orientation
-end
+rotation = Quaternion.from_axis_angle(
+  [1, 0, 0],
+  ROTATION_STEP
+)
 
-if args.inputs.keyboard.key_down.y
-  q = Quaternion.from_axis_angle([0,1,0], Math::PI / 2)
-  args.state.orientation = q * args.state.orientation
-end
+args.state.orientation =
+  (rotation * args.state.orientation).normalized
 ```
 
-Press **X then Y**.
+Run **R, X×6, Y×6**.
 
 Reset.
 
-Press **Y then X**.
+Run **R, Y×6, X×6**.
 
 ---
 
@@ -522,15 +542,15 @@ But a different final orientation.
 
 That is:
 
-\[
+$$
 q_y q_x \ne q_x q_y
-\]
+$$
 
 ---
 
-# Demo 3: smooth orientation travel
+# Where this goes next: SLERP
 
-Choose a target orientation:
+Choose a target orientation (future work, not in the quick demo):
 
 ```ruby
 target = Quaternion.from_axis_angle(
@@ -548,8 +568,6 @@ orientation = Quaternion.slerp(
   progress
 )
 ```
-
-This is often why graphics engines love quaternions.
 
 ---
 
@@ -571,9 +589,9 @@ On screen, the motion looks smooth and deliberate.
 
 Two quaternions can represent the same rotation:
 
-\[
+$$
 q \quad \text{and} \quad -q
-\]
+$$
 
 For rendering, nothing changes.
 
@@ -583,11 +601,11 @@ We usually choose the shorter path.
 
 ---
 
-# Demo 4: from cube to spectacle
+# Beyond the cube
 
 A cube is good for teaching.
 
-But the final object can be more memorable:
+Future versions could use something more memorable:
 
 - a wireframe ruby gemstone;
 - a tiny construction crane;
@@ -599,11 +617,11 @@ But the final object can be more memorable:
 
 # Construction-site callback
 
-A crane gives the talk a nice loop:
+A crane could give a future talk a nice loop:
 
 Michael began with 3D construction-site visualisation.
 
-We return with a tiny Ruby-made 3D scene.
+We could return with a tiny Ruby-made 3D scene.
 
 Possible parts:
 
@@ -618,16 +636,17 @@ Possible parts:
 # What DragonRuby is doing
 
 ```ruby
-def tick(args)
-  update_input(args)
-  update_orientation(args)
-  draw_scene(args)
+module Main
+  def tick(args)
+    args.state.demo ||= CubeDemo.new
+    args.state.demo.tick(args)
+  end
 end
 ```
 
 That is enough.
 
-The rest is mathematics plus lines on a screen.
+`CubeDemo` owns the input, state updates, and drawing.
 
 ---
 
@@ -635,9 +654,9 @@ The rest is mathematics plus lines on a screen.
 
 Each extension gave us something:
 
-\[
+$$
 \mathbb N \to \mathbb Z \to \mathbb Q \to \mathbb R \to \mathbb C \to \mathbb H
-\]
+$$
 
 - negatives
 - fractions
@@ -671,9 +690,9 @@ Together, they describe **one orientation**.
 
 And with one compact formula:
 
-\[
+$$
 p' = qpq^{-1}
-\]
+$$
 
 we can rotate a whole 3D world.
 
