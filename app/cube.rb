@@ -10,6 +10,8 @@ class Cube
     [-1,  1,  1]
   ].freeze
 
+  VERTEX_LABELS = ("A".."H").to_a.freeze
+
   EDGES = [
     [0, 1], [1, 2], [2, 3], [3, 0],
     [4, 5], [5, 6], [6, 7], [7, 4],

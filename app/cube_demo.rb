@@ -85,6 +85,18 @@ class CubeDemo
         a: 255
       }
     end
+
+    points.each_with_index do |(x, y), index|
+      args.outputs.labels << {
+        x: x + 10,
+        y: y + 10,
+        text: Cube::VERTEX_LABELS[index],
+        size_enum: 3,
+        r: 255,
+        g: 235,
+        b: 130
+      }
+    end
   end
 
   def draw_instructions(args)
