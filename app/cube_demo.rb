@@ -17,6 +17,7 @@ class CubeDemo
   def initialise_state(args)
     args.state.orientation ||= Quaternion.identity
     args.state.cube ||= Cube.new
+    args.state.rotation_mode ||= :world
   end
 
   def process_input(args)
@@ -31,13 +32,23 @@ class CubeDemo
     rotate(args, [0, 0, 1], -ROTATION_STEP) if keyboard.key_down.l
 
     reset(args) if keyboard.key_down.r
+    toggle_rotation_mode(args) if keyboard.key_down.m
   end
 
   def rotate(args, axis, angle)
     rotation = Quaternion.from_axis_angle(axis, angle)
 
     args.state.orientation =
-      (rotation * args.state.orientation).normalized
+      if args.state.rotation_mode == :local
+        (args.state.orientation * rotation).normalized
+      else
+        (rotation * args.state.orientation).normalized
+      end
+  end
+
+  def toggle_rotation_mode(args)
+    args.state.rotation_mode =
+      args.state.rotation_mode == :world ? :local : :world
   end
 
   def reset(args)
@@ -50,6 +61,8 @@ class CubeDemo
     draw_title(args)
     draw_cube(args)
     draw_local_axes(args)
+    draw_world_axes(args)
+    draw_rotation_mode(args)
     draw_instructions(args)
     draw_quaternion(args)
   end
@@ -126,11 +139,71 @@ class CubeDemo
     args.outputs.labels << {
       x: 640,
       y: 100,
-      text: "X/Y/Z: rotate forward    J/K/L: rotate backward    R: reset",
+      text: "X/Y/Z: rotate forward    J/K/L: rotate backward    R: reset    M: toggle mode",
       alignment_enum: 1,
       r: 190,
       g: 200,
       b: 215
+    }
+  end
+
+  def draw_world_axes(args)
+    x = 1_080
+    y = 190
+    length = 60
+
+    args.outputs.labels << {
+      x: x,
+      y: y + 90,
+      text: "World axes (fixed)",
+      alignment_enum: 1,
+      r: 175,
+      g: 185,
+      b: 205
+    }
+
+    draw_world_axis(args, x, y, x + length, y, "(x)", [255, 134, 134])
+    draw_world_axis(args, x, y, x, y + length, "(y)", [125, 220, 153])
+
+    args.outputs.sprites << {
+      x: x - 6,
+      y: y - 6,
+      w: 12,
+      h: 12,
+      path: File.join("sprites", "circle", "solid.png"),
+      r: 130,
+      g: 177,
+      b: 255,
+      a: 180
+    }
+    args.outputs.labels << {
+      x: x + 12,
+      y: y - 4,
+      text: "(z) toward you",
+      r: 130,
+      g: 177,
+      b: 255
+    }
+  end
+
+  def draw_world_axis(args, x1, y1, x2, y2, label, colour)
+    r, g, b = colour
+
+    args.outputs.lines << { x: x1, y: y1, x2: x2, y2: y2, r: r, g: g, b: b, a: 180 }
+    args.outputs.labels << { x: x2 + 6, y: y2 + 6, text: label, r: r, g: g, b: b }
+  end
+
+  def draw_rotation_mode(args)
+    mode = args.state.rotation_mode == :local ? "Local axes" : "World axes"
+
+    args.outputs.labels << {
+      x: 640,
+      y: 130,
+      text: "Rotation mode: #{mode}",
+      alignment_enum: 1,
+      r: 220,
+      g: 225,
+      b: 240
     }
   end
 
