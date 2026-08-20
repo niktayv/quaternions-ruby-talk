@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "skills": {
+    "dragonruby": {
+      "source": "nitemaeric/dragonruby-skills",
+      "sourceType": "github",
+      "skillPath": "skills/dragonruby/SKILL.md",
+      "computedHash": "f31512b2ddb5719a6941b41f12697ae046cf44560b40a8e587cae21a72fe1e4d"
+    },
+    "dragonruby-3d": {
+      "source": "nitemaeric/dragonruby-skills",
+      "sourceType": "github",
+      "skillPath": "skills/dragonruby-3d/SKILL.md",
+      "computedHash": "2925c553c3dd710bed996ed91303b4a9f90312fb462d97930bd6ecafd1115824"
+    },
+    "dragonruby-audio": {
+      "source": "nitemaeric/dragonruby-skills",
+      "sourceType": "github",
+      "skillPath": "skills/dragonruby-audio/SKILL.md",
+      "computedHash": "10ab41807f3b86e39f7f1c9f85d367d72c45b72038e9cf0300a691e2537ab472"
+    },
+    "dragonruby-pathfinding": {
+      "source": "nitemaeric/dragonruby-skills",
+      "sourceType": "github",
+      "skillPath": "skills/dragonruby-pathfinding/SKILL.md",
+      "computedHash": "30bd68691154bc1c5ad0410b57423e43401ab604291e5fb39df7a800ce327892"
+    },
+    "dragonruby-platformer": {
+      "source": "nitemaeric/dragonruby-skills",
+      "sourceType": "github",
+      "skillPath": "skills/dragonruby-platformer/SKILL.md",
+      "computedHash": "6ef4282920310a3251a1dc59b11668338a9c21d18e56fb34d48b7e71b2e92a40"
+    },
+    "dragonruby-rendering": {
+      "source": "nitemaeric/dragonruby-skills",
+      "sourceType": "github",
+      "skillPath": "skills/dragonruby-rendering/SKILL.md",
+      "computedHash": "7d6e626ffaa479ca88864784c53903ba8a98230359f95fecf75057df373e87d0"
+    },
+    "dragonruby-ui": {
+      "source": "nitemaeric/dragonruby-skills",
+      "sourceType": "github",
+      "skillPath": "skills/dragonruby-ui/SKILL.md",
+      "computedHash": "d96a3a55eb9fb461c6572c89d54dc11d73aed84755cfc981669847e9d6caa94e"
+    },
+    "dragonruby-yard": {
+      "source": "nitemaeric/dragonruby-skills",
+      "sourceType": "github",
+      "skillPath": "skills/dragonruby-yard/SKILL.md",
+      "computedHash": "52a3528dc16925d83e22323d2d32c1176b29c42fb70adf9971a52001e238fdbe"
+    }
+  }
+}
