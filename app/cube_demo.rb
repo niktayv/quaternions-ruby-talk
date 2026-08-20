@@ -1,5 +1,6 @@
 class CubeDemo
   ROTATION_STEP = Math::PI / 12.0
+  CUBE_SIZE = 117
   LOCAL_AXES = [
     { label: "(x)", vector: [1.35, 0, 0], colour: [255, 134, 134] },
     { label: "(y)", vector: [0, 1.35, 0], colour: [125, 220, 153] },
@@ -16,7 +17,8 @@ class CubeDemo
 
   def initialise_state(args)
     args.state.orientation ||= Quaternion.identity
-    args.state.cube ||= Cube.new
+    args.state.cube ||= Cube.new(size: CUBE_SIZE)
+    args.state.cube.size = CUBE_SIZE
     args.state.rotation_mode ||= :world
   end
 
@@ -173,10 +175,12 @@ class CubeDemo
     x = 1_080
     y = 190
     length = 60
+    diagonal = length * Math.sqrt(3.0) / 2.0
+    rise = length / 2.0
 
     args.outputs.labels << {
       x: x,
-      y: y + 90,
+      y: y + 100,
       text: "World axes (fixed)",
       alignment_enum: 1,
       r: 175,
@@ -184,28 +188,9 @@ class CubeDemo
       b: 205
     }
 
-    draw_world_axis(args, x, y, x + length, y, "(x)", [255, 134, 134])
+    draw_world_axis(args, x, y, x + diagonal, y + rise, "(x)", [255, 134, 134])
     draw_world_axis(args, x, y, x, y + length, "(y)", [125, 220, 153])
-
-    args.outputs.sprites << {
-      x: x - 6,
-      y: y - 6,
-      w: 12,
-      h: 12,
-      path: File.join("sprites", "circle", "solid.png"),
-      r: 130,
-      g: 177,
-      b: 255,
-      a: 180
-    }
-    args.outputs.labels << {
-      x: x + 12,
-      y: y - 4,
-      text: "(z) toward you",
-      r: 130,
-      g: 177,
-      b: 255
-    }
+    draw_world_axis(args, x, y, x - diagonal, y + rise, "(z)", [130, 177, 255])
   end
 
   def draw_world_axis(args, x1, y1, x2, y2, label, colour)

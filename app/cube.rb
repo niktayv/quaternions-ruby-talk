@@ -1,4 +1,6 @@
 class Cube
+  attr_accessor :size
+
   VERTICES = [
     [-1, -1, -1],
     [ 1, -1, -1],
@@ -24,9 +26,8 @@ class Cube
     [197, 225, 165], [165, 216, 208], [189, 178, 255], [244, 172, 183]
   ].freeze
 
-  def initialize(size: 130, camera_distance: 5)
-    @size = size
-    @camera_distance = camera_distance
+  def initialize(size: 117)
+    @size = size.to_f
   end
 
   def projected_vertices(orientation, centre_x:, centre_y:)
@@ -48,12 +49,14 @@ class Cube
   def project(point, centre_x:, centre_y:)
     x, y, z = point
 
-    depth = @camera_distance - z
-    perspective = @camera_distance / depth
+    # Project the three world axes at equal scale, 120 degrees apart:
+    # x points up-right, y points up, and z points up-left.
+    horizontal = Math.sqrt(3.0) / 2.0
+    vertical = 0.5
 
     [
-      centre_x + x * @size * perspective,
-      centre_y + y * @size * perspective
+      centre_x + (x - z) * @size * horizontal,
+      centre_y + (y + (x + z) * vertical) * @size
     ]
   end
 end
