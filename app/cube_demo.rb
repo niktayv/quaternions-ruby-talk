@@ -11,10 +11,15 @@ class CubeDemo
     { key: :z, label: "z * k", y: 400, colour: [130, 177, 255] }
   ].freeze
   LOCAL_AXES = [
-    { label: "(x)", vector: [1.35, 0, 0], colour: [255, 134, 134] },
-    { label: "(y)", vector: [0, 1.35, 0], colour: [125, 220, 153] },
-    { label: "(z)", vector: [0, 0, 1.35], colour: [130, 177, 255] }
+    { label: "(x)", vector: [0, 0, -1.35], colour: [255, 134, 134] },
+    { label: "(y)", vector: [1.35, 0, 0], colour: [125, 220, 153] },
+    { label: "(z)", vector: [0, 1.35, 0], colour: [130, 177, 255] }
   ].freeze
+  ROTATION_AXES = {
+    x: [0, 0, -1],
+    y: [1, 0, 0],
+    z: [0, 1, 0]
+  }.freeze
 
   def tick(args)
     initialise_state(args)
@@ -37,13 +42,13 @@ class CubeDemo
 
     update_quaternion_from_sliders(args)
 
-    rotate(args, [1, 0, 0],  ROTATION_STEP) if keyboard.key_down.x
-    rotate(args, [0, 1, 0],  ROTATION_STEP) if keyboard.key_down.y
-    rotate(args, [0, 0, 1],  ROTATION_STEP) if keyboard.key_down.z
+    rotate(args, ROTATION_AXES[:x],  ROTATION_STEP) if keyboard.key_down.x
+    rotate(args, ROTATION_AXES[:y],  ROTATION_STEP) if keyboard.key_down.y
+    rotate(args, ROTATION_AXES[:z],  ROTATION_STEP) if keyboard.key_down.z
 
-    rotate(args, [1, 0, 0], -ROTATION_STEP) if keyboard.key_down.j
-    rotate(args, [0, 1, 0], -ROTATION_STEP) if keyboard.key_down.k
-    rotate(args, [0, 0, 1], -ROTATION_STEP) if keyboard.key_down.l
+    rotate(args, ROTATION_AXES[:x], -ROTATION_STEP) if keyboard.key_down.j
+    rotate(args, ROTATION_AXES[:y], -ROTATION_STEP) if keyboard.key_down.k
+    rotate(args, ROTATION_AXES[:z], -ROTATION_STEP) if keyboard.key_down.l
 
     reset(args) if keyboard.key_down.r
     toggle_rotation_mode(args) if keyboard.key_down.m
@@ -204,9 +209,9 @@ class CubeDemo
       b: 205
     }
 
-    draw_world_axis(args, x, y, x + diagonal, y + rise, "(x)", [255, 134, 134])
-    draw_world_axis(args, x, y, x, y + length, "(y)", [125, 220, 153])
-    draw_world_axis(args, x, y, x - diagonal, y + rise, "(z)", [130, 177, 255])
+    draw_world_axis(args, x, y, x + diagonal, y + rise, "(y)", [125, 220, 153])
+    draw_world_axis(args, x, y, x, y + length, "(z)", [130, 177, 255])
+    draw_world_axis(args, x, y, x + diagonal, y - rise, "(x)", [255, 134, 134])
   end
 
   def draw_world_axis(args, x1, y1, x2, y2, label, colour)
@@ -235,15 +240,15 @@ class CubeDemo
   end
 
   def quaternion_components(q)
-    { w: q.w, x: q.x, y: q.y, z: q.z }
+    { w: q.w, x: -q.z, y: q.x, z: q.y }
   end
 
   def quaternion_from_components(components)
     Quaternion.new(
       components[:w],
-      components[:x],
       components[:y],
-      components[:z]
+      components[:z],
+      -components[:x]
     ).normalized
   end
 

@@ -1,16 +1,16 @@
 class Cube
   attr_accessor :size
 
-  # Half-extents give the displayed shape full proportions of x:y:z = 3:2:1.
+  # Renderer extents x:y:z = 2:1:3 give displayed local-axis proportions 3:2:1.
   VERTICES = [
-    [-1.5, -1, -0.5],
-    [ 1.5, -1, -0.5],
-    [ 1.5,  1, -0.5],
-    [-1.5,  1, -0.5],
-    [-1.5, -1,  0.5],
-    [ 1.5, -1,  0.5],
-    [ 1.5,  1,  0.5],
-    [-1.5,  1,  0.5]
+    [-1, -0.5, -1.5],
+    [ 1, -0.5, -1.5],
+    [ 1,  0.5, -1.5],
+    [-1,  0.5, -1.5],
+    [-1, -0.5,  1.5],
+    [ 1, -0.5,  1.5],
+    [ 1,  0.5,  1.5],
+    [-1,  0.5,  1.5]
   ].freeze
 
   VERTEX_LABELS = ("A".."H").to_a.freeze
