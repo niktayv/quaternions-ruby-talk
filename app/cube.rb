@@ -42,7 +42,9 @@ class Cube
   end
 
   def vertex_depths(orientation)
-    VERTICES.map { |vertex| orientation.rotate(vertex)[2] }
+    # The viewer looks toward negative renderer z. This depth is independent of
+    # the isometric screen projection and is used only for edge weighting.
+    VERTICES.map { |vertex| -orientation.rotate(vertex)[2] }
   end
 
   private

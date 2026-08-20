@@ -112,12 +112,19 @@ class CubeDemo
       centre_y: 380
     )
     depths = cube.vertex_depths(args.state.orientation)
+    nearest_depth = depths.max
+    farthest_depth = depths.min
 
     Cube::EDGES.each_with_index do |(from_index, to_index), index|
       x1, y1 = points[from_index]
       x2, y2 = points[to_index]
       r, g, b = Cube::EDGE_COLOURS[index]
-      thickness = edge_thickness(depths[from_index], depths[to_index])
+      thickness = edge_thickness(
+        depths[from_index],
+        depths[to_index],
+        farthest_depth,
+        nearest_depth
+      )
 
       draw_cube_edge(args, x1, y1, x2, y2, [r, g, b], thickness)
     end
@@ -135,9 +142,13 @@ class CubeDemo
     end
   end
 
-  def edge_thickness(from_depth, to_depth)
+  def edge_thickness(from_depth, to_depth, farthest_depth, nearest_depth)
     average_depth = (from_depth + to_depth) / 2.0
-    [[((average_depth + 1.75) * 1.45).round, 2].max, 5].min
+    depth_span = nearest_depth - farthest_depth
+    return 3 if depth_span.zero?
+
+    relative_depth = (average_depth - farthest_depth) / depth_span
+    [[(2 + relative_depth * 3).round, 2].max, 5].min
   end
 
   def draw_cube_edge(args, x1, y1, x2, y2, colour, thickness)
