@@ -1,3 +1,6 @@
+# Dormant slider implementation. The demo no longer requires or includes this
+# module. To restore it, require this file, include `QuaternionSliders` in
+# `CubeDemo`, then restore its slider-state and rendering calls.
 module QuaternionSliders
   SLIDER_X = 950
   SLIDER_WIDTH = 220

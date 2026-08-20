@@ -1,8 +1,4 @@
-require "app/quaternion_sliders.rb"
-
 class CubeDemo
-  include QuaternionSliders
-
   ROTATION_STEP = Math::PI / 12.0
   CUBE_SIZE = 117
   LOCAL_AXES = [
@@ -29,13 +25,10 @@ class CubeDemo
     args.state.cube ||= Cube.new(size: CUBE_SIZE)
     args.state.cube.size = CUBE_SIZE
     args.state.rotation_mode ||= :world
-    args.state.quaternion_components ||= quaternion_components(args.state.orientation)
   end
 
   def process_input(args)
     keyboard = args.inputs.keyboard
-
-    update_quaternion_from_sliders(args)
 
     rotate(args, ROTATION_AXES[:x],  ROTATION_STEP) if keyboard.key_down.x
     rotate(args, ROTATION_AXES[:y],  ROTATION_STEP) if keyboard.key_down.y
@@ -59,7 +52,6 @@ class CubeDemo
         (rotation * args.state.orientation).normalized
       end
 
-    sync_quaternion_components(args)
   end
 
   def toggle_rotation_mode(args)
@@ -69,7 +61,6 @@ class CubeDemo
 
   def reset(args)
     args.state.orientation = Quaternion.identity
-    sync_quaternion_components(args)
   end
 
   def render(args)
@@ -79,7 +70,6 @@ class CubeDemo
     draw_cube(args)
     draw_local_axes(args)
     draw_world_axes(args)
-    draw_quaternion_sliders(args)
     draw_rotation_mode(args)
     draw_instructions(args)
     draw_quaternion(args)
@@ -245,14 +235,14 @@ class CubeDemo
   end
 
   def draw_quaternion(args)
-    q = args.state.quaternion_components
+    q = args.state.orientation
 
     text = format(
       "q = %.3f %+.3fi %+.3fj %+.3fk",
-      q[:w],
-      q[:x],
-      q[:y],
-      q[:z]
+      q.w,
+      q.x,
+      q.y,
+      q.z
     )
 
     args.outputs.labels << {
