@@ -249,6 +249,7 @@ class CubeDemo
       args.state.quaternion_components[slider[:key]] =
         ((mouse.x - SLIDER_X).fdiv(SLIDER_WIDTH) * 2.0 - 1.0).clamp(-1.0, 1.0)
       args.state.orientation = quaternion_from_components(args.state.quaternion_components)
+      sync_quaternion_components(args)
       break
     end
   end
@@ -340,14 +341,14 @@ class CubeDemo
   end
 
   def draw_quaternion(args)
-    q = args.state.orientation
+    q = args.state.quaternion_components
 
     text = format(
       "q = %.3f %+.3fi %+.3fj %+.3fk",
-      q.w,
-      q.x,
-      q.y,
-      q.z
+      q[:w],
+      q[:x],
+      q[:y],
+      q[:z]
     )
 
     args.outputs.labels << {
