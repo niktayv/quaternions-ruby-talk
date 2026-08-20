@@ -73,7 +73,7 @@ class CubeDemo
     args.outputs.labels << {
       x: 640,
       y: 690,
-      text: "Quaternion Cube",
+      text: "Quaternion Parallelepiped",
       alignment_enum: 1,
       size_enum: 6,
       r: 235,
