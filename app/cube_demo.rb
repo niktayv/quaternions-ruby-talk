@@ -1,16 +1,18 @@
 class CubeDemo
   ROTATION_STEP = Math::PI / 12.0
   CUBE_SIZE = 117
-  LOCAL_AXES = [
-    { label: "(x)", vector: [-1.35, 0, 0], colour: [255, 134, 134] },
-    { label: "(y)", vector: [0, 0, -1.35], colour: [125, 220, 153] },
-    { label: "(z)", vector: [0, 1.35, 0], colour: [130, 177, 255] }
-  ].freeze
-  ROTATION_AXES = {
+  LOCAL_AXIS_LENGTH = 1.35
+  AXIS_VECTORS = {
     x: [-1, 0, 0],
     y: [0, 0, -1],
     z: [0, 1, 0]
   }.freeze
+  LOCAL_AXES = [
+    { label: "(x)", vector: AXIS_VECTORS[:x].map { |value| value * LOCAL_AXIS_LENGTH }, colour: [255, 134, 134] },
+    { label: "(y)", vector: AXIS_VECTORS[:y].map { |value| value * LOCAL_AXIS_LENGTH }, colour: [125, 220, 153] },
+    { label: "(z)", vector: AXIS_VECTORS[:z].map { |value| value * LOCAL_AXIS_LENGTH }, colour: [130, 177, 255] }
+  ].freeze
+  ROTATION_AXES = AXIS_VECTORS
   VIEW_DIRECTION = [-1, 1, -1].freeze
   FACE_FACING_EPSILON = 0.0001
   FACE_OPACITY = 110
@@ -35,7 +37,7 @@ class CubeDemo
     args.state.orientation ||= Quaternion.identity
     args.state.cube ||= Cube.new(size: CUBE_SIZE)
     args.state.cube.size = CUBE_SIZE
-    args.state.rotation_mode ||= :world
+    args.state.rotation_mode ||= :local
   end
 
   def process_input(args)
@@ -72,6 +74,7 @@ class CubeDemo
 
   def reset(args)
     args.state.orientation = Quaternion.identity
+    args.state.rotation_mode = :local
   end
 
   def render(args)
@@ -275,7 +278,7 @@ class CubeDemo
     args.outputs.labels << {
       x: 640,
       y: 100,
-      text: "X/Y/Z: rotate forward    J/K/L: rotate backward    R: reset    M: toggle mode",
+      text: "X/Y/Z: rotate local axes    J/K/L: rotate backward    R: reset    M: toggle mode",
       alignment_enum: 1,
       r: 190,
       g: 200,
