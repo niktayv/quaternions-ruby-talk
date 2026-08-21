@@ -14,15 +14,13 @@ class CubeDemo
   ].freeze
   ROTATION_AXES = AXIS_VECTORS
   VIEW_DIRECTION = [-1, 1, -1].freeze
-  FACE_FACING_EPSILON = 0.0001
-  FACE_OPACITY = 110
   FACES = [
-    { vertices: [0, 1, 2, 3], normal: [0, 0, -1], colour: [88, 144, 214] },
-    { vertices: [4, 5, 6, 7], normal: [0, 0, 1], colour: [58, 96, 158] },
-    { vertices: [0, 4, 5, 1], normal: [0, -1, 0], colour: [89, 166, 128] },
-    { vertices: [1, 5, 6, 2], normal: [1, 0, 0], colour: [205, 120, 120] },
-    { vertices: [2, 6, 7, 3], normal: [0, 1, 0], colour: [184, 158, 86] },
-    { vertices: [3, 7, 4, 0], normal: [-1, 0, 0], colour: [151, 110, 185] }
+    { vertices: [0, 1, 2, 3], colour: [88, 144, 214] },
+    { vertices: [4, 5, 6, 7], colour: [58, 96, 158] },
+    { vertices: [0, 4, 5, 1], colour: [89, 166, 128] },
+    { vertices: [1, 5, 6, 2], colour: [205, 120, 120] },
+    { vertices: [2, 6, 7, 3], colour: [184, 158, 86] },
+    { vertices: [3, 7, 4, 0], colour: [151, 110, 185] }
   ].freeze
 
   def tick(args)
@@ -110,29 +108,11 @@ class CubeDemo
       centre_x: 640,
       centre_y: 380
     )
-    view_direction = VIEW_DIRECTION
     depths = cube.vertex_depths(
       args.state.orientation,
-      view_direction: view_direction
+      view_direction: VIEW_DIRECTION
     )
-    nearest_depth = depths.max
-    farthest_depth = depths.min
-    layers = cube_layers(
-      args.state.orientation,
-      points,
-      depths,
-      farthest_depth,
-      nearest_depth,
-      view_direction
-    )
-
-    layers.each do |layer|
-      if layer[:kind] == :face
-        draw_cube_face(args, points, layer[:face])
-      else
-        draw_cube_edge(args, *layer[:edge])
-      end
-    end
+    cube_faces(depths).each { |face| draw_cube_face(args, points, face) }
 
     points.each_with_index do |(x, y), index|
       args.outputs.labels << {
@@ -147,50 +127,10 @@ class CubeDemo
     end
   end
 
-  def edge_thickness(from_depth, to_depth, farthest_depth, nearest_depth)
-    average_depth = (from_depth + to_depth) / 2.0
-    depth_span = nearest_depth - farthest_depth
-    return 3 if depth_span.zero?
-
-    relative_depth = (average_depth - farthest_depth) / depth_span
-    [[(2 + relative_depth * 3).round, 2].max, 5].min
-  end
-
-  def cube_layers(orientation, points, depths, farthest_depth, nearest_depth, view_direction)
-    edge_layers = Cube::EDGES.each_with_index.map do |(from_index, to_index), index|
-      x1, y1 = points[from_index]
-      x2, y2 = points[to_index]
-      r, g, b = Cube::EDGE_COLOURS[index]
-      thickness = edge_thickness(
-        depths[from_index],
-        depths[to_index],
-        farthest_depth,
-        nearest_depth
-      )
-
-      {
-        kind: :edge,
-        depth: (depths[from_index] + depths[to_index]) / 2.0,
-        edge: [x1, y1, x2, y2, [r, g, b], thickness]
-      }
-    end
-
-    face_layers = []
-    FACES.each do |face|
-      normal_x, normal_y, normal_z = orientation.rotate(face[:normal])
-      facing =
-        normal_x * view_direction[0] +
-        normal_y * view_direction[1] +
-        normal_z * view_direction[2]
-      next unless facing > FACE_FACING_EPSILON
-
-      depth = face[:vertices].inject(0.0) { |sum, index| sum + depths[index] } /
+  def cube_faces(depths)
+    FACES.sort_by do |face|
+      face[:vertices].inject(0.0) { |sum, index| sum + depths[index] } /
         face[:vertices].length
-      face_layers << { kind: :face, depth: depth, face: face }
-    end
-
-    (edge_layers + face_layers).sort_by do |layer|
-      [layer[:depth], layer[:kind] == :face ? 0 : 1]
     end
   end
 
@@ -225,31 +165,6 @@ class CubeDemo
         y: y,
         x2: intersections.last,
         y2: y,
-        r: r,
-        g: g,
-        b: b,
-        a: FACE_OPACITY
-      }
-    end
-  end
-
-  def draw_cube_edge(args, x1, y1, x2, y2, colour, thickness)
-    length = Math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
-    return if length.zero?
-
-    offset_x = -(y2 - y1) / length
-    offset_y = (x2 - x1) / length
-    r, g, b = colour
-
-    thickness.times do |index|
-      offset = index - (thickness - 1) / 2.0
-
-      args.outputs.primitives << {
-        primitive_marker: :line,
-        x: x1 + offset_x * offset,
-        y: y1 + offset_y * offset,
-        x2: x2 + offset_x * offset,
-        y2: y2 + offset_y * offset,
         r: r,
         g: g,
         b: b,
