@@ -17,13 +17,9 @@ class CubeDemo
   ].freeze
   ROTATION_AXES = AXIS_VECTORS
   VIEW_DIRECTION = [-1, 1, -1].freeze
-  FACES = [
-    { vertices: [0, 1, 2, 3], colour: [88, 144, 214] },
-    { vertices: [4, 5, 6, 7], colour: [58, 96, 158] },
-    { vertices: [0, 4, 5, 1], colour: [89, 166, 128] },
-    { vertices: [1, 5, 6, 2], colour: [205, 120, 120] },
-    { vertices: [2, 6, 7, 3], colour: [184, 158, 86] },
-    { vertices: [3, 7, 4, 0], colour: [151, 110, 185] }
+  FACE_COLOURS = [
+    [88, 144, 214], [58, 96, 158], [89, 166, 128],
+    [205, 120, 120], [184, 158, 86], [151, 110, 185]
   ].freeze
 
   def tick(args)
@@ -115,7 +111,9 @@ class CubeDemo
       args.state.orientation,
       view_direction: VIEW_DIRECTION
     )
-    cube_faces(depths).each { |face| draw_cube_face(args, points, face) }
+    cube_faces(depths).each do |vertices, colour|
+      draw_cube_face(args, points, vertices, colour)
+    end
 
     points.each_with_index do |(x, y), index|
       args.outputs.labels << {
@@ -131,17 +129,18 @@ class CubeDemo
   end
 
   def cube_faces(depths)
-    FACES.sort_by do |face|
-      face[:vertices].inject(0.0) { |sum, index| sum + depths[index] } /
-        face[:vertices].length
+    Cube::FACES.each_with_index.sort_by do |vertices, _index|
+      vertices.inject(0.0) { |sum, index| sum + depths[index] } / vertices.length
+    end.map do |vertices, index|
+      [vertices, FACE_COLOURS[index]]
     end
   end
 
-  def draw_cube_face(args, points, face)
-    vertices = face[:vertices].map { |index| points[index] }
+  def draw_cube_face(args, points, vertex_indexes, colour)
+    vertices = vertex_indexes.map { |index| points[index] }
     min_y = vertices.map { |point| point[1] }.min.ceil
     max_y = vertices.map { |point| point[1] }.max.floor
-    r, g, b = face[:colour]
+    r, g, b = colour
 
     (min_y..max_y).each do |y|
       scan_y = y + 0.5
