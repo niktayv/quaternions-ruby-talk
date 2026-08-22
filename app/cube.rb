@@ -1,5 +1,7 @@
 class Cube
   DEFAULT_SIZE = 110
+  ISOMETRIC_HORIZONTAL_SCALE = Math.sqrt(3.0) / 2.0
+  ISOMETRIC_VERTICAL_SCALE = 0.5
 
   attr_accessor :size
 
@@ -58,12 +60,9 @@ class Cube
 
     # Project the three renderer axes at equal scale, 120 degrees apart:
     # x points up-right, y points up, and z points up-left.
-    horizontal = Math.sqrt(3.0) / 2.0
-    vertical = 0.5
-
     [
-      centre_x + (x - z) * @size * horizontal,
-      centre_y + (y + (x + z) * vertical) * @size
+      centre_x + (x - z) * @size * ISOMETRIC_HORIZONTAL_SCALE,
+      centre_y + (y + (x + z) * ISOMETRIC_VERTICAL_SCALE) * @size
     ]
   end
 end
