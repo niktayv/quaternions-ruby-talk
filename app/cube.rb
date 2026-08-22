@@ -1,4 +1,6 @@
 class Cube
+  DEFAULT_SIZE = 110
+
   attr_accessor :size
 
   # Renderer extents x:y:z = 3:1:2 give displayed local-axis proportions 3:2:1.
@@ -26,7 +28,7 @@ class Cube
     [1, 5, 6, 2], [2, 6, 7, 3], [3, 7, 4, 0]
   ].freeze
 
-  def initialize(size: 117)
+  def initialize(size: DEFAULT_SIZE)
     @size = size.to_f
   end
 

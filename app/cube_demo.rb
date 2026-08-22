@@ -3,7 +3,6 @@ require "app/cube.rb"
 
 class CubeDemo
   ROTATION_STEP = Math::PI / 12.0
-  CUBE_SIZE = 117
   LOCAL_AXIS_LENGTH = 1.35
   AXIS_VECTORS = {
     x: [-1, 0, 0],
@@ -32,8 +31,8 @@ class CubeDemo
 
   def initialise_state(args)
     args.state.orientation ||= Quaternion.identity
-    args.state.cube ||= Cube.new(size: CUBE_SIZE)
-    args.state.cube.size = CUBE_SIZE
+    args.state.cube ||= Cube.new
+    args.state.cube.size = Cube::DEFAULT_SIZE
     args.state.rotation_mode ||= :local
   end
 
