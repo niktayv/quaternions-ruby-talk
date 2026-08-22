@@ -1,5 +1,5 @@
 require "app/quaternion.rb"
-require "app/cube.rb"
+require "app/box_model.rb"
 
 class QuaternionDemo
   ROTATION_STEP = Math::PI / 12.0
@@ -30,8 +30,8 @@ class QuaternionDemo
 
   def initialise_state(args)
     args.state.orientation ||= Quaternion.identity
-    args.state.cube ||= Cube.new
-    args.state.cube.size = Cube::DEFAULT_SIZE
+    args.state.model ||= BoxModel.new
+    args.state.model.size = BoxModel::DEFAULT_SIZE
     args.state.rotation_mode ||= :local
   end
 
@@ -75,7 +75,7 @@ class QuaternionDemo
     args.outputs.background_color = [18, 22, 32]
 
     draw_title(args)
-    draw_cube(args)
+    draw_model(args)
     draw_local_axes(args)
     draw_world_axes(args)
     draw_rotation_mode(args)
@@ -96,27 +96,27 @@ class QuaternionDemo
     }
   end
 
-  def draw_cube(args)
-    cube = args.state.cube
+  def draw_model(args)
+    model = args.state.model
 
-    points = cube.projected_vertices(
+    points = model.projected_vertices(
       args.state.orientation,
       centre_x: 640,
       centre_y: 380
     )
-    depths = cube.vertex_depths(
+    depths = model.vertex_depths(
       args.state.orientation,
       view_direction: VIEW_DIRECTION
     )
-    cube_faces(depths).each do |vertices, colour|
-      draw_cube_face(args, points, vertices, colour)
+    model_faces(depths).each do |vertices, colour|
+      draw_model_face(args, points, vertices, colour)
     end
 
     points.each_with_index do |(x, y), index|
       args.outputs.labels << {
         x: x + 10,
         y: y + 10,
-        text: Cube::VERTEX_LABELS[index],
+        text: BoxModel::VERTEX_LABELS[index],
         size_enum: 3,
         r: 255,
         g: 235,
@@ -125,15 +125,15 @@ class QuaternionDemo
     end
   end
 
-  def cube_faces(depths)
-    Cube::FACES.each_with_index.sort_by do |vertices, _index|
+  def model_faces(depths)
+    BoxModel::FACES.each_with_index.sort_by do |vertices, _index|
       vertices.inject(0.0) { |sum, index| sum + depths[index] } / vertices.length
     end.map do |vertices, index|
       [vertices, FACE_COLOURS[index]]
     end
   end
 
-  def draw_cube_face(args, points, vertex_indexes, colour)
+  def draw_model_face(args, points, vertex_indexes, colour)
     vertices = vertex_indexes.map { |index| points[index] }
     min_y = vertices.map { |point| point[1] }.min.ceil
     max_y = vertices.map { |point| point[1] }.max.floor
@@ -173,12 +173,12 @@ class QuaternionDemo
   end
 
   def draw_local_axes(args)
-    cube = args.state.cube
+    model = args.state.model
     orientation = args.state.orientation
-    origin = cube.projected_point([0, 0, 0], orientation, centre_x: 640, centre_y: 380)
+    origin = model.projected_point([0, 0, 0], orientation, centre_x: 640, centre_y: 380)
 
     LOCAL_AXES.each do |axis|
-      x, y = cube.projected_point(axis[:vector], orientation, centre_x: 640, centre_y: 380)
+      x, y = model.projected_point(axis[:vector], orientation, centre_x: 640, centre_y: 380)
       r, g, b = axis[:colour]
 
       args.outputs.lines << { x: origin[0], y: origin[1], x2: x, y2: y, r: r, g: g, b: b }

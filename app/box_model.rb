@@ -1,4 +1,4 @@
-class Cube
+class BoxModel
   DEFAULT_SIZE = 110
   ISOMETRIC_HORIZONTAL_SCALE = Math.sqrt(3.0) / 2.0
   ISOMETRIC_VERTICAL_SCALE = 0.5
