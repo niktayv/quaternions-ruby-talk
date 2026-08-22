@@ -1,3 +1,6 @@
+require "app/quaternion.rb"
+require "app/cube.rb"
+
 class CubeDemo
   ROTATION_STEP = Math::PI / 12.0
   CUBE_SIZE = 117

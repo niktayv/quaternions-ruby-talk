@@ -1,5 +1,3 @@
-require "app/quaternion.rb"
-require "app/cube.rb"
 require "app/cube_demo.rb"
 
 module Main
