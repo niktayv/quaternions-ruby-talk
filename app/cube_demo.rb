@@ -4,17 +4,16 @@ require "app/cube.rb"
 class CubeDemo
   ROTATION_STEP = Math::PI / 12.0
   LOCAL_AXIS_LENGTH = 1.35
-  AXIS_VECTORS = {
+  LOCAL_AXIS_VECTORS = {
     x: [-1, 0, 0],
     y: [0, 0, -1],
     z: [0, 1, 0]
   }.freeze
   LOCAL_AXES = [
-    { label: "(x)", vector: AXIS_VECTORS[:x].map { |value| value * LOCAL_AXIS_LENGTH }, colour: [255, 134, 134] },
-    { label: "(y)", vector: AXIS_VECTORS[:y].map { |value| value * LOCAL_AXIS_LENGTH }, colour: [125, 220, 153] },
-    { label: "(z)", vector: AXIS_VECTORS[:z].map { |value| value * LOCAL_AXIS_LENGTH }, colour: [130, 177, 255] }
+    { label: "(x)", vector: LOCAL_AXIS_VECTORS[:x].map { |value| value * LOCAL_AXIS_LENGTH }, colour: [255, 134, 134] },
+    { label: "(y)", vector: LOCAL_AXIS_VECTORS[:y].map { |value| value * LOCAL_AXIS_LENGTH }, colour: [125, 220, 153] },
+    { label: "(z)", vector: LOCAL_AXIS_VECTORS[:z].map { |value| value * LOCAL_AXIS_LENGTH }, colour: [130, 177, 255] }
   ].freeze
-  ROTATION_AXES = AXIS_VECTORS
   VIEW_DIRECTION = [-1, 1, -1].freeze
   FACE_COLOURS = [
     [88, 144, 214], [58, 96, 158], [89, 166, 128],
@@ -39,13 +38,13 @@ class CubeDemo
   def process_input(args)
     keyboard = args.inputs.keyboard
 
-    rotate(args, ROTATION_AXES[:x],  ROTATION_STEP) if keyboard.key_down.x
-    rotate(args, ROTATION_AXES[:y],  ROTATION_STEP) if keyboard.key_down.y
-    rotate(args, ROTATION_AXES[:z],  ROTATION_STEP) if keyboard.key_down.z
+    rotate(args, LOCAL_AXIS_VECTORS[:x],  ROTATION_STEP) if keyboard.key_down.x
+    rotate(args, LOCAL_AXIS_VECTORS[:y],  ROTATION_STEP) if keyboard.key_down.y
+    rotate(args, LOCAL_AXIS_VECTORS[:z],  ROTATION_STEP) if keyboard.key_down.z
 
-    rotate(args, ROTATION_AXES[:x], -ROTATION_STEP) if keyboard.key_down.j
-    rotate(args, ROTATION_AXES[:y], -ROTATION_STEP) if keyboard.key_down.k
-    rotate(args, ROTATION_AXES[:z], -ROTATION_STEP) if keyboard.key_down.l
+    rotate(args, LOCAL_AXIS_VECTORS[:x], -ROTATION_STEP) if keyboard.key_down.j
+    rotate(args, LOCAL_AXIS_VECTORS[:y], -ROTATION_STEP) if keyboard.key_down.k
+    rotate(args, LOCAL_AXIS_VECTORS[:z], -ROTATION_STEP) if keyboard.key_down.l
 
     reset(args) if keyboard.key_down.r
     toggle_rotation_mode(args) if keyboard.key_down.m
@@ -60,7 +59,6 @@ class CubeDemo
       else
         (rotation * args.state.orientation).normalized
       end
-
   end
 
   def toggle_rotation_mode(args)
