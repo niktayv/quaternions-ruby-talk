@@ -1,7 +1,7 @@
 require "app/quaternion.rb"
 require "app/cube.rb"
 
-class CubeDemo
+class QuaternionDemo
   ROTATION_STEP = Math::PI / 12.0
   LOCAL_AXIS_LENGTH = 1.35
   LOCAL_AXIS_VECTORS = {
