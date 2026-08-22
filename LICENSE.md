@@ -4,7 +4,7 @@ This repository uses separate licences for its original software and talk materi
 
 ## Demo code: MIT Licence
 
-The original quaternion demo source in `app/main.rb`, `app/quaternion.rb`, `app/cube.rb`, and `app/cube_demo.rb` is licensed under the MIT Licence.
+The original quaternion demo source in `app/main.rb`, `app/quaternion.rb`, `app/box_model.rb`, and `app/quaternion_demo.rb` is licensed under the MIT Licence.
 
 Copyright (c) 2026 Quaternions Are Not That Scary contributors
 

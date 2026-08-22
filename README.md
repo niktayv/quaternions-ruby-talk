@@ -4,7 +4,7 @@ This repository supports a proposed talk for the Ruby Nights Auckland meetup abo
 
 It contains:
 
-- a quaternion cube demo runnable with the DragonRuby Game Toolkit in `app/`;
+- a quaternion box-model demo runnable with the DragonRuby Game Toolkit in `app/`;
 - the Marp slide source in `slides/quaternions_dragonruby_marp.md`;
 - the exported presentation in `slides/quaternions_dragonruby_marp.pdf`;
 - implementation and presentation plans in `doc/plan/`.
@@ -17,7 +17,7 @@ Place this repository in a DragonRuby distribution as its `mygame` directory, th
 ../dragonruby
 ```
 
-Use `X`, `Y`, and `Z` to rotate around the three axes, `J`, `K`, and `L` to rotate in the opposite direction, and `R` to reset the cube.
+Use `X`, `Y`, and `Z` to rotate around the three axes, `J`, `K`, and `L` to rotate in the opposite direction, and `R` to reset the model.
 
 ## Licence
 

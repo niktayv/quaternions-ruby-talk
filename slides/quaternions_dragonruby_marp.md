@@ -421,7 +421,7 @@ We only need:
 
 ---
 
-# A cube is only data
+# A box is only data
 
 ```ruby
 VERTICES = [
@@ -458,16 +458,16 @@ Fake 3D can be very convincing.
 
 ---
 
-# Drawing the cube
+# Drawing the model
 
 ```ruby
-points = args.state.cube.projected_vertices(
+points = args.state.model.projected_vertices(
   args.state.orientation,
   centre_x: 640,
   centre_y: 380
 )
 
-Cube::EDGES.each do |from_index, to_index|
+BoxModel::EDGES.each do |from_index, to_index|
   x1, y1 = points[from_index]
   x2, y2 = points[to_index]
 
@@ -536,7 +536,7 @@ The same two rotations.
 
 The same two angles.
 
-The same cube.
+The same box.
 
 But a different final orientation.
 
@@ -601,17 +601,17 @@ We usually choose the shorter path.
 
 ---
 
-# Beyond the cube
+# Beyond the box
 
-A cube is good for teaching.
+A box is good for teaching.
 
 Future versions could use something more memorable:
 
 - a wireframe ruby gemstone;
 - a tiny construction crane;
-- a constellation of rotating cubes;
+- a constellation of rotating boxes;
 - RUBY letters arranged in 3D;
-- a cube with local coordinate axes and trails.
+- a box with local coordinate axes and trails.
 
 ---
 
@@ -638,7 +638,7 @@ Possible parts:
 ```ruby
 module Main
   def tick(args)
-    args.state.demo ||= CubeDemo.new
+    args.state.demo ||= QuaternionDemo.new
     args.state.demo.tick(args)
   end
 end
@@ -646,7 +646,7 @@ end
 
 That is enough.
 
-`CubeDemo` owns the input, state updates, and drawing.
+`QuaternionDemo` owns the input, state updates, and drawing.
 
 ---
 
@@ -703,4 +703,3 @@ we can rotate a whole 3D world.
 # Quaternions are strange numbers
 
 ## But the geometry they describe is the geometry we already live in.
-
