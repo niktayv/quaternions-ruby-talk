@@ -44,7 +44,7 @@ class Cube
     project(orientation.rotate(point), centre_x: centre_x, centre_y: centre_y)
   end
 
-  def vertex_depths(orientation, view_direction: [0, 0, -1])
+  def vertex_depths(orientation, view_direction:)
     # The depth cue is independent of the isometric screen projection.
     # It is the dot product with the caller's viewer-facing axis.
     VERTICES.map do |vertex|
