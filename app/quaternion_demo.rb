@@ -87,7 +87,7 @@ class QuaternionDemo
     args.outputs.labels << {
       x: 640,
       y: 690,
-      text: "Quaternion Parallelepiped",
+      text: "Quaternion Box",
       alignment_enum: 1,
       size_enum: 6,
       r: 235,

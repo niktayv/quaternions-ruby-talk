@@ -5,7 +5,8 @@ class BoxModel
 
   attr_accessor :size
 
-  # Renderer extents x:y:z = 3:1:2 give displayed local-axis proportions 3:2:1.
+  # The current model is a rectangular box. Renderer extents x:y:z = 3:1:2
+  # give displayed local-axis proportions 3:2:1.
   VERTICES = [
     [-1.5, -0.5, -1],
     [ 1.5, -0.5, -1],
